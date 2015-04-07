@@ -6,9 +6,7 @@ import (
 	"io"
 	"io/ioutil"
 	"net/http"
-	"net/url"
 	"regexp"
-	"strings"
 	"time"
 )
 
@@ -132,11 +130,8 @@ func (p *httpPoster) post(newIP string) error {
 
 	fmt.Printf("httpPoster.post: New IP %s\n", newIP)
 
-	v := url.Values{}
-	v.Set(p.ipField, newIP)
-	v.Set(p.hostnameField, p.hostname)
-
-	req, err := http.NewRequest("POST", p.url, strings.NewReader(v.Encode()))
+	req, err := http.NewRequest("GET",
+		fmt.Sprintf("%s?%s=%s&%s=%s", p.url, p.ipField, newIP, p.hostnameField, p.hostname), nil)
 	if err != nil {
 		return errors.New("httpPoster.post: Could not initialize request")
 	}
