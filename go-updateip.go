@@ -187,10 +187,6 @@ func newHttpPoster(url, ipField, hostnameField, hostname, username, password str
 	return channel
 }
 
-func postIP(url, ipField, hostnameField, username, password string) {
-	return
-}
-
 func statusOK(status int) bool {
 	if status < 200 {
 		return false
