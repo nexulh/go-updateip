@@ -53,20 +53,20 @@ func main() {
 func getExtIP() (string, error) {
 	resp, err := http.Get(ext_ip_url)
 	if err != nil {
-		return "", fmt.Errorf("No response from %s", ext_ip_url)
+		return "", fmt.Errorf("No response from %s\n", ext_ip_url)
 	}
 	defer resp.Body.Close()
 
 	ip, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("Could not read response from %s", ext_ip_url)
+		return "", fmt.Errorf("Could not read response from %s\n", ext_ip_url)
 	}
 
 	v_ip := r_ip.FindString(string(ip))
 	if len(v_ip) > 0 {
 		return v_ip, nil
 	}
-	return string(ip), fmt.Errorf("No IP found in response from %s", ext_ip_url)
+	return string(ip), fmt.Errorf("No IP found in response from %s\n", ext_ip_url)
 }
 
 // processIP runs as a separate goroutine. It consumes the given channel and sends it forward to
@@ -132,7 +132,7 @@ func (p *httpPoster) post(newIP string) error {
 	req, err := http.NewRequest("GET",
 		fmt.Sprintf("%s?%s=%s&%s=%s", p.url, p.ipField, newIP, p.hostnameField, p.hostname), nil)
 	if err != nil {
-		return fmt.Errorf("httpPoster.post: Could not initialize request")
+		return fmt.Errorf("httpPoster.post: Could not initialize request\n")
 	}
 
 	req.SetBasicAuth(p.username, p.password)
@@ -140,27 +140,27 @@ func (p *httpPoster) post(newIP string) error {
 	client := &http.Client{}
 	resp, err := client.Do(req)
 	if err != nil {
-		return fmt.Errorf("httpPoster.post: Error getting response: %v", err)
+		return fmt.Errorf("httpPoster.post: Error getting response: %v\n", err)
 	}
 	defer resp.Body.Close()
 
 	if !statusOK(resp.StatusCode) {
-		return fmt.Errorf("httpPoster.post: Response not OK: %v", err)
+		return fmt.Errorf("httpPoster.post: Response not OK: %v\n", err)
 	}
 
 	bodyText, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		return fmt.Errorf("httpPoster.post: Error getting body: %v", err)
+		return fmt.Errorf("httpPoster.post: Error getting body: %v\n", err)
 	}
 	body := string(bodyText)
 
 	good_response := r_responseOK.MatchString(body)
 	if !good_response {
-		return fmt.Errorf("httpPoster.post: Response not OK: %s", body)
+		return fmt.Errorf("httpPoster.post: Response not OK: %s\n", body)
 	}
 
 	p.lastIP = newIP
-	fmt.Printf("httpPoster.post: Successfully set IP %s for host %s, response: %s", p.lastIP, p.hostname, body)
+	fmt.Printf("httpPoster.post: Successfully set IP %s for host %s, response: %s\n", p.lastIP, p.hostname, body)
 
 	return nil
 }
